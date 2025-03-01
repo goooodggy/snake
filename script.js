@@ -60,6 +60,15 @@ class SnakeGame {
         this.ctx.fillStyle = 'black';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+        // 绘制墙壁边框
+        this.ctx.fillStyle = '#333';
+        // 左右墙壁
+        this.ctx.fillRect(0, 0, this.gridSize, this.canvas.height);
+        this.ctx.fillRect(this.canvas.width - this.gridSize, 0, this.gridSize, this.canvas.height);
+        // 上下墙壁
+        this.ctx.fillRect(0, 0, this.canvas.width, this.gridSize);
+        this.ctx.fillRect(0, this.canvas.height - this.gridSize, this.canvas.width, this.gridSize);
+
         // 绘制食物
         this.ctx.fillStyle = 'red';
         this.ctx.fillRect(this.food.x*this.gridSize, this.food.y*this.gridSize, 
@@ -75,8 +84,8 @@ class SnakeGame {
 
     // 碰撞检测
     checkCollision(position) {
-        return position.x < 0 || position.x >= this.tileCount || 
-               position.y < 0 || position.y >= this.tileCount ||
+        return position.x < 1 || position.x >= this.tileCount - 1 ||
+               position.y < 1 || position.y >= this.tileCount - 1 ||
                this.snake.some((segment, index) => 
                    index !== 0 && segment.x === position.x && segment.y === position.y
                );
