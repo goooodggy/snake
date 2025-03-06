@@ -139,6 +139,10 @@ class SnakeGame {
             popupElement.innerHTML = '';
         }
         
+        // 计算食物的像素位置
+        const foodY = this.food.y * this.gridSize + this.gridSize/2;
+        popupElement.style.top = `${foodY}px`;
+        
         // 显示新的得分
         popupElement.innerHTML = `+${score}`;
         popupElement.className = 'score-animation';
