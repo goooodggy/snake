@@ -7,11 +7,24 @@
 </head>
 <body>
     <div class="start-container">
-        <button id="startButton">开始游戏</button>
+        <div>
+            <h1>经典贪吃蛇</h1>
+            <label for="speed">速度：</label>
+            <select id="speed">
+                <option value="150">慢</option>
+                <option value="100">中</option>
+                <option value="50">快</option>
+            </select>
+            <br><br>
+            <button id="startButton">开始游戏</button>
+        </div>
     </div>
     <div class="game-container" style="display: none;">
-        <h1 id="score">得分：0</h1>
-        <!-- <div id="brownCanvas" style="position: absolute; z-index: 1; width: 400px; height: 400px; background-color: brown;"></div> -->
+        <div class="game-header">
+            <h1 id="score">得分：0</h1>
+            <div id="combo" style="display: none">连击×<span id="comboCount">0</span></div>
+        </div>
+        <div id="score-popup"></div>
         <canvas id="gameCanvas" width="400" height="400"></canvas>
         <div class="controls">
             <p>方向键控制移动</p>
