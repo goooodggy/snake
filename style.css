@@ -29,3 +29,16 @@ body {
     margin-top: 15px;
     font-size: 1.1em;
 }
+
+.start-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.start-container button {
+    padding: 10px 20px;
+    font-size: 1.5em;
+    cursor: pointer;
+}

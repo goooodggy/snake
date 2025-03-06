@@ -6,10 +6,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="game-container">
+    <div class="start-container">
+        <button id="startButton">开始游戏</button>
+    </div>
+    <div class="game-container" style="display: none;">
         <h1 id="score">得分：0</h1>
-        <div id="brownCanvas" style="position: absolute; z-index: 1; width: 400px; height: 400px; background-color: brown; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-        <canvas id="gameCanvas" width="400" height="400" style="position: absolute; z-index: 0; top: 50%; left: 50%; transform: translate(-50%, -50%);"></canvas>
+        <!-- <div id="brownCanvas" style="position: absolute; z-index: 1; width: 400px; height: 400px; background-color: brown;"></div> -->
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
         <div class="controls">
             <p>方向键控制移动</p>
             <p>空格键暂停/继续</p>
