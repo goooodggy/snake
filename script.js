@@ -12,12 +12,17 @@ class SnakeGame {
         this.gameSpeed = speed;
         // 根据速度设置对应的得分
         this.pointsPerFood = this.getPointsBySpeed(speed);
+        this.comboTimeout = this.getComboTimeoutBySpeed(speed); // 根据速度设置连击持续时间
         this.isPaused = false;
         
         // 事件监听
         document.addEventListener('keydown', this.handleKeyPress.bind(this));
         document.addEventListener('keydown', this.startMovement.bind(this));
         this.gameLoop = setInterval(this.update.bind(this), this.gameSpeed);
+
+        this.combo = 0;
+        this.comboTimer = null;
+        this.comboFadeInterval = null; // 用于渐变动画的计时器
     }
 
     // 根据速度返回对应的得分
@@ -27,6 +32,16 @@ class SnakeGame {
             case 100:  return 10; // 中速 10分
             case 50:  return 20; // 快速 20分
             // default:  return 10;
+        }
+    }
+
+    // 根据速度返回连击持续时间
+    getComboTimeoutBySpeed(speed) {
+        switch(speed) {
+            case 150: return 3000; // 慢速 3秒
+            case 100: return 2000; // 中速 2秒
+            case 50:  return 1000; // 快速 1秒
+            default: return 2000;
         }
     }
 
@@ -52,6 +67,9 @@ class SnakeGame {
         // 碰撞检测
         if (this.checkCollision(head)) {
             clearInterval(this.gameLoop);
+            if (this.comboTimer) {
+                clearTimeout(this.comboTimer);
+            }
             alert('游戏结束！得分：' + this.score);
             location.reload();
             return;
@@ -61,14 +79,88 @@ class SnakeGame {
 
         // 吃到食物
         if (head.x === this.food.x && head.y === this.food.y) {
-            this.score += this.pointsPerFood;
-            document.getElementById('score').textContent = '得分：' + this.score;
-            this.food = this.generateFood();
+            this.handleFoodEaten();
         } else {
             this.snake.pop();
         }
 
         this.draw();
+    }
+
+    // 处理吃到食物的逻辑
+    handleFoodEaten() {
+        // 增加连击数
+        this.combo++;
+        // 更新显示
+        this.updateComboDisplay();
+        
+        // 重置连击计时器和渐变动画
+        if (this.comboTimer) {
+            clearTimeout(this.comboTimer);
+        }
+        if (this.comboFadeInterval) {
+            clearInterval(this.comboFadeInterval);
+        }
+        
+        // 设置新的计时器
+        this.comboTimer = setTimeout(() => {
+            this.combo = 0;
+            this.updateComboDisplay();
+        }, this.comboTimeout);
+
+        // 设置渐变动画
+        this.startComboFade();
+
+        // 更新分数和食物
+        this.score += this.pointsPerFood;
+        document.getElementById('score').textContent = '得分：' + this.score;
+        this.food = this.generateFood();
+    }
+
+    // 开始连击渐变动画
+    startComboFade() {
+        const comboElement = document.getElementById('combo');
+        if (this.combo >= 2) {
+            // 重置opacity
+            comboElement.style.opacity = '1';
+            
+            // 清除之前的动画
+            if (this.comboFadeInterval) {
+                clearInterval(this.comboFadeInterval);
+            }
+            
+            // 计算每个间隔需要减少的透明度
+            const steps = 50; // 动画更新次数
+            const interval = this.comboTimeout / steps;
+            const opacityStep = 0.7 / steps; // 最终透明度为0.3，所以减少0.7
+            
+            let currentStep = 0;
+            this.comboFadeInterval = setInterval(() => {
+                currentStep++;
+                if (currentStep <= steps) {
+                    comboElement.style.opacity = (1 - opacityStep * currentStep).toString();
+                } else {
+                    clearInterval(this.comboFadeInterval);
+                }
+            }, interval);
+        }
+    }
+
+    // 更新连击显示
+    updateComboDisplay() {
+        const comboElement = document.getElementById('combo');
+        const comboCountElement = document.getElementById('comboCount');
+        
+        if (this.combo >= 2) {
+            comboElement.style.display = 'block';
+            comboCountElement.textContent = this.combo;
+            // 重置动画
+            comboElement.style.animation = 'none';
+            comboElement.offsetHeight; // 触发重排
+            comboElement.style.animation = 'pulse 0.5s ease-in-out';
+        } else {
+            comboElement.style.display = 'none';
+        }
     }
 
     // 绘制游戏元素
