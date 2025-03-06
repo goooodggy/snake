@@ -6,7 +6,7 @@ class SnakeGame {
         this.tileCount = this.canvas.width / this.gridSize;
         this.snake = [{x: 10, y: 10}];
         this.food = this.generateFood();
-        this.dx = 1;
+        this.dx = 0;
         this.dy = 0;
         this.score = 0;
         this.gameSpeed = 100;
@@ -14,15 +14,20 @@ class SnakeGame {
         
         // 事件监听
         document.addEventListener('keydown', this.handleKeyPress.bind(this));
+        document.addEventListener('keydown', this.startMovement.bind(this));
         this.gameLoop = setInterval(this.update.bind(this), this.gameSpeed);
     }
 
     // 生成食物位置
     generateFood() {
-        return {
-            x: Math.floor(Math.random() * this.tileCount),
-            y: Math.floor(Math.random() * this.tileCount)
-        };
+        let food;
+        do {
+            food = {
+                x: Math.floor(Math.random() * (this.tileCount - 2)) + 1,
+                y: Math.floor(Math.random() * (this.tileCount - 2)) + 1
+            };
+        } while (this.snake.some(segment => segment.x === food.x && segment.y === food.y));
+        return food;
     }
 
     // 游戏主循环
@@ -123,7 +128,34 @@ class SnakeGame {
                 break;
         }
     }
+
+    // 开始移动
+    startMovement(event) {
+        if (this.dx !== 0 || this.dy !== 0) return;
+        switch(event.key) {
+            case 'ArrowUp':
+                this.dx = 0;
+                this.dy = -1;
+                break;
+            case 'ArrowDown':
+                this.dx = 0;
+                this.dy = 1;
+                break;
+            case 'ArrowLeft':
+                this.dx = -1;
+                this.dy = 0;
+                break;
+            case 'ArrowRight':
+                this.dx = 1;
+                this.dy = 0;
+                break;
+        }
+    }
 }
 
 // 初始化游戏
-new SnakeGame();
+document.getElementById('startButton').addEventListener('click', function() {
+    document.querySelector('.start-container').style.display = 'none';
+    document.querySelector('.game-container').style.display = 'block';
+    new SnakeGame();
+});
