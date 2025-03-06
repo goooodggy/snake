@@ -73,3 +73,33 @@ body {
     from { opacity: 1; }
     to { opacity: 0.3; }
 }
+
+#score-popup {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #e74c3c;
+    font-size: 2em;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.score-animation {
+    animation: scorePopup 1s ease-out forwards;
+}
+
+@keyframes scorePopup {
+    0% {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-50%) scale(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100%) scale(1);
+    }
+}

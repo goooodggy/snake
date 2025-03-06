@@ -23,6 +23,7 @@ class SnakeGame {
         this.combo = 0;
         this.comboTimer = null;
         this.comboFadeInterval = null; // 用于渐变动画的计时器
+        this.scorePopupTimeout = null;
     }
 
     // 根据速度返回对应的得分
@@ -91,7 +92,19 @@ class SnakeGame {
     handleFoodEaten() {
         // 增加连击数
         this.combo++;
-        // 更新显示
+        
+        // 计算本次得分（基础分 * 连击数）
+        const baseScore = this.pointsPerFood;
+        const comboScore = baseScore * this.combo;
+        this.score += comboScore;
+        
+        // 显示得分弹出
+        this.showScorePopup(comboScore);
+        
+        // 更新总分显示
+        document.getElementById('score').textContent = '得分：' + this.score;
+        
+        // 更新连击显示
         this.updateComboDisplay();
         
         // 重置连击计时器和渐变动画
@@ -111,10 +124,30 @@ class SnakeGame {
         // 设置渐变动画
         this.startComboFade();
 
-        // 更新分数和食物
-        this.score += this.pointsPerFood;
-        document.getElementById('score').textContent = '得分：' + this.score;
+        // 生成新的食物
         this.food = this.generateFood();
+    }
+
+    // 显示得分弹出
+    showScorePopup(score) {
+        const popupElement = document.getElementById('score-popup');
+        
+        // 清除之前的动画
+        if (this.scorePopupTimeout) {
+            clearTimeout(this.scorePopupTimeout);
+            popupElement.className = '';
+            popupElement.innerHTML = '';
+        }
+        
+        // 显示新的得分
+        popupElement.innerHTML = `+${score}`;
+        popupElement.className = 'score-animation';
+        
+        // 设置动画结束后清除内容
+        this.scorePopupTimeout = setTimeout(() => {
+            popupElement.innerHTML = '';
+            popupElement.className = '';
+        }, 1000);
     }
 
     // 开始连击渐变动画
