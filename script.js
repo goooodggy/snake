@@ -1,5 +1,5 @@
 class SnakeGame {
-    constructor() {
+    constructor(speed) {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
         this.gridSize = 20;
@@ -9,13 +9,25 @@ class SnakeGame {
         this.dx = 0;
         this.dy = 0;
         this.score = 0;
-        this.gameSpeed = 100;
+        this.gameSpeed = speed;
+        // 根据速度设置对应的得分
+        this.pointsPerFood = this.getPointsBySpeed(speed);
         this.isPaused = false;
         
         // 事件监听
         document.addEventListener('keydown', this.handleKeyPress.bind(this));
         document.addEventListener('keydown', this.startMovement.bind(this));
         this.gameLoop = setInterval(this.update.bind(this), this.gameSpeed);
+    }
+
+    // 根据速度返回对应的得分
+    getPointsBySpeed(speed) {
+        switch(speed) {
+            case 150: return 5;  // 慢速 5分
+            case 100:  return 10; // 中速 10分
+            case 50:  return 20; // 快速 20分
+            // default:  return 10;
+        }
     }
 
     // 生成食物位置
@@ -49,7 +61,7 @@ class SnakeGame {
 
         // 吃到食物
         if (head.x === this.food.x && head.y === this.food.y) {
-            this.score += 10;
+            this.score += this.pointsPerFood;
             document.getElementById('score').textContent = '得分：' + this.score;
             this.food = this.generateFood();
         } else {
@@ -155,7 +167,8 @@ class SnakeGame {
 
 // 初始化游戏
 document.getElementById('startButton').addEventListener('click', function() {
+    const speed = parseInt(document.getElementById('speed').value);
     document.querySelector('.start-container').style.display = 'none';
     document.querySelector('.game-container').style.display = 'block';
-    new SnakeGame();
+    new SnakeGame(speed);
 });
